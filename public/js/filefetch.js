@@ -5,7 +5,6 @@ fetch("/api/userId")
         document.getElementById("id").innerHTML=data.items.map(item=>`<li>${item}</li>`).join("");
         document.getElementById("title").innerHTML=data.items.map(item=>`<li>${item}</li>`).join("");
         document.getElementById("completed").innerHTML=data.items.map(item=>`<li>${item}</li>`).join("");
-        document.getElementById("list").innerHTML=data.items.map(item=>`<li>${item}</li>`).join("");
     })
     .catch(error=>{
         console.error("Error fetching data: ",error);
