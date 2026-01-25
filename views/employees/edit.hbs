@@ -1,0 +1,31 @@
+<h1>Edit Employee</h1>
+{{#if error}}
+    <div class="error">{{error}}</div>
+{{/if}}
+
+<section>
+    <form method="POST" action="/employees/{{employee._id}}?_method=PUT">
+        <label>First Name
+            <input name="firstName" value="{{employee.firstName}}" required>
+        </label>
+        <label>Last Name
+            <input name="lastName" value="{{employee.lastName}}" required>
+        </label>
+        <label>Department
+            <input name="department" value="{{employee.department}}" required>
+        </label>
+        <label>Start Date
+            <input type="date" name="startDate" value="{{employee.startDate}}" required>
+        </label>
+        <label>Job Title
+            <input name="jobTitle" value="{{employee.jobTitle}}" required>
+        </label>
+        <label>Salary
+            <input type="number" name="salary" min="15" value="{{employee.salary}}" required>
+        </label>
+        <br>
+        <button type="submit">Update Employee</button>
+        <br>
+        <a href="/">Cancel</a>
+    </form>
+</section>

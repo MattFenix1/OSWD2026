@@ -1,0 +1,69 @@
+<h1>Employee List</h1>
+{{#if error}}
+    <p class="error">{{error}}</p>
+{{/if}}
+
+<section class="card">
+    <form action="/employees" method="POST">
+        <label>First Name
+            <input name="firstName" value="{{employee.firstName}}" required>
+        </label>
+        <label>Last Name
+            <input name="lastName" value="{{employee.lastName}}" required>
+        </label>
+        <label>Department
+            <input name="department" value="{{employee.department}}" required>
+        </label>
+        <label>Start Date
+            <input type="date" name="startDate" value="{{employee.startDate}}" required>
+        </label>
+        <label>Job Title
+            <input name="jobTitle" value="{{employee.jobTitle}}" required>
+        </label>
+        <label>Salary
+            <input type="number" name="salary" min="15" value="{{employee.salary}}" required>
+        </label>
+        <br>
+        <button type="submit">Add Employee</button>
+    </form>
+</section>
+
+<section class="card">
+    <h2>List of Employees</h2>
+    {{#if employees.length}}
+        <table>
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Department</th>
+                    <th>Start Date</th>
+                    <th>Job Title</th>
+                    <th>Salary</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each employees}}
+                    <tr>
+                        <td>{{this.firstName}}</td>
+                        <td>{{this.lastName}}</td>
+                        <td>{{this.department}}</td>
+                        <td>{{this.startDate}}</td>
+                        <td>{{this.jobTitle}}</td>
+                        <td>{{this.salary}}</td>
+                        <td>
+                            <a href="/employees/{{this._id}}/edit">Edit</a>
+                            <form method="POST" action="/employees/{{this._id}}?_method=DELETE">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{else}}
+        <p>No employees yet. Start hiring now! </p>
+    {{/else}}
+    {{/if}}
+</section>

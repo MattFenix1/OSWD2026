@@ -4,16 +4,28 @@ const mongoose=require("mongoose");
 require("dotenv").config();
 const fs=require("fs");
 const path=require("path");
+const methodOverride=require("method-override");
 const app=express();
 const port=process.env.PORT || 3000;
 const MONGO_URI=process.env.MONGO_URI;
+const emplRouter=require("./routes/employees");
+const {engine}=require("express-handlebars");
+
+app.engine("hbs", engine({extname:".hbs"}));
+app.set("view engine","hbs");
+app.set("views",path.join(__dirname,"views"));
 
 if(MONGO_URI){
     console.error("Missing connection data");
     process.exit(1);
 }
+
 app.use(express.static(path.join(__dirname,"public")))
 app.use(express.json())
+app.use(express.urlencoded({extended:true}));
+app.use(methodOverride("_method"));
+
+app.use("/",emplRouter);
 
 async function connectToMongo(){
     try{
@@ -24,25 +36,25 @@ async function connectToMongo(){
         process.exit(1);
     }
 }
-app.get("/", (req,res)=>{
-    res.send("It is running!!!")
-});
-app.get("/index",(req,res)=>{
-    res.sendFile(path.join(__dirname,"public","index.html"));
-    console.log("Hit Index");
-});
-app.get("/todo",(req,res)=>{
-    res.sendFile(path.join(__dirname,"public","todo.html"));
-    console.log("Hit Todo");
-});
-app.get("/read-todo",(req,res)=>{
-    res.sendFile(path.join(__dirname,"public","read-todo.html"));
-    console.log("Hit Read-Todo");
-});
-app.get("/fakepage",(req,res)=>{
-    res.sendFile(path.join(__dirname,"public","fakepage"));
-    console.log("Hit FakePage");
-});
+// app.get("/", (req,res)=>{
+//     res.send("It is running!!!")
+// });
+// app.get("/index",(req,res)=>{
+//     res.sendFile(path.join(__dirname,"public","index.html"));
+//     console.log("Hit Index");
+// });
+// app.get("/todo",(req,res)=>{
+//     res.sendFile(path.join(__dirname,"public","todo.html"));
+//     console.log("Hit Todo");
+// });
+// app.get("/read-todo",(req,res)=>{
+//     res.sendFile(path.join(__dirname,"public","read-todo.html"));
+//     console.log("Hit Read-Todo");
+// });
+// app.get("/fakepage",(req,res)=>{
+//     res.sendFile(path.join(__dirname,"public","fakepage"));
+//     console.log("Hit FakePage");
+// });
 
 app.get("/api/data",(req,res)=>{
     res.join({
@@ -61,20 +73,20 @@ app.get("/api/userId",(req,res)=>{
     });
 });
 
-const todo=new mongoose.Schema({},{strict:false})
-const ToDoList=new mongoose.model("ToDoList",todo);
-app.get("/api/todo",async(req,res)=>{
-    const data=await ToDoList.find({});
-    console.log(data);
-    res.json(data);
-});
-app.get("/api/todo/:todolist",async(req,res)=>{
-    console.log(req.params.todolist);
-    const tlist=req.params.todolist;
-    const TodoList=await ToDoList.findOne({todolist:tlist});
-    console.log(TodoList);
-    res.json(todolist);
-});
+// const todo=new mongoose.Schema({},{strict:false})
+// const ToDoList=new mongoose.model("ToDoList",todo);
+// app.get("/api/todo",async(req,res)=>{
+//     const data=await ToDoList.find({});
+//     console.log(data);
+//     res.json(data);
+// });
+// app.get("/api/todo/:todolist",async(req,res)=>{
+//     console.log(req.params.todolist);
+//     const tlist=req.params.todolist;
+//     const TodoList=await ToDoList.findOne({todolist:tlist});
+//     console.log(TodoList);
+//     res.json(todolist);
+// });
 connectToMongo().then(()=>{
     app.listen(port,()=>{
         console.log(`Server is running on port ${port}`);
