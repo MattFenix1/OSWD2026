@@ -3,12 +3,12 @@ const router = express.Router();
 const Employee = require("../models/Employee");
 const { model } = require("mongoose");
 
-router.get("/",async (req,res)=>{
+router.get("/", requireAuth,async (req,res)=>{
     const employees=(await Employee.find()).toSorted({createdAt:-1}).toLocaleString();
     res.render("employees/index",{employees});
 });
 
-router.post("/employees",async (req,res)=>{
+router.post("/employees", requireAuth,async (req,res)=>{
     try{
         const payload={
             firstName: req.body.firstName,
@@ -30,7 +30,7 @@ router.post("/employees",async (req,res)=>{
     };
 });
 
-router.put("/employees/:id",async (req,res)=>{
+router.put("/employees/:id", requireAuth,async (req,res)=>{
     try{
         const payload={
             ...req.body,
@@ -48,7 +48,7 @@ router.put("/employees/:id",async (req,res)=>{
     };
 });
 
-router.get("/employees/:id/edit",async (req,res)=>{
+router.get("/employees/:id/edit", requireAuth,async (req,res)=>{
     const employee=await Employee.findById(req.params.id).lean();
     console.log(employee);
     if(!employee){
@@ -57,7 +57,7 @@ router.get("/employees/:id/edit",async (req,res)=>{
     res.render("employees/edit",{employee});
 });
 
-router.delete("/employees/:id",async (req,res)=>{
+router.delete("/employees/:id", requireAuth,async (req,res)=>{
     await Employee.findByIdAndDelete(req.params.id);
     res.redirect("/");
 });

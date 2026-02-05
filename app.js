@@ -10,6 +10,9 @@ const port=process.env.PORT || 3000;
 const MONGO_URI=process.env.MONGO_URI;
 const emplRouter=require("./routes/employees");
 const {engine}=require("express-handlebars");
+const session=require("express-session");
+const MongoStore=require("connect-mongo");
+const passport=require("passport");
 
 app.engine("hbs", engine({extname:".hbs"}));
 app.set("view engine","hbs");
@@ -25,8 +28,6 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}));
 app.use(methodOverride("_method"));
 
-app.use("/",emplRouter);
-
 async function connectToMongo(){
     try{
         await mongoose.connect(MONGO_URI)
@@ -36,6 +37,34 @@ async function connectToMongo(){
         process.exit(1);
     }
 }
+
+app.use(session(
+    {
+        secret:process.env.SESSION_SECRET,
+        resave:false,
+        saveUninitialized:false,
+        cookie:{httpOnly:true},
+    }
+));
+
+app.use(passport.initialized());
+app.use(passport.session());
+
+app.use((req,res,next)=>{
+    res.locals.user=req.user;
+    next();
+});
+
+require("./auth/passport");
+
+const authRouter=require("./routes/auth");
+app.use("/",authRouter);
+
+app.use("/",emplRouter);
+
+app.use((require,res)=>{
+    res.status(404).redirect("/login");
+});
 // app.get("/", (req,res)=>{
 //     res.send("It is running!!!")
 // });
