@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Employee = require("../models/Employee");
 const { model } = require("mongoose");
+const requireAuth = require("../middleware/auth");
 
 router.get("/", requireAuth,async (req,res)=>{
     const employees=(await Employee.find()).toSorted({createdAt:-1}).toLocaleString();
